@@ -6,20 +6,6 @@ No scrollbar is implemented.
 Heavily inspired by demo code at
 https://forums.wxwidgets.org/viewtopic.php?p=196414#p196414
 
-Next steps:
-- centre image at startup
-- autoscale frame to fit image where image is larger than 300x300 pixels
-- if image size is greater than display size, fit to display
-- investigate alternatives to getting image size besides opencv
-- clarify logic in ViewerPanel.OnZoom()
-- replace wx.Point2D and wx.Point objects with tuples where practical
-- why so twitchy?
-- add zoom bar below image so touchscreen is not required
-- add autoplay gif feature (currently only shows first scene)
-- issue: if I zoom in too much using double-click, it gets stuck and I
-cannot zoom out using pinch gesture. Fix by limiting zoom in.
-- issue: fails on webp files. Fix by adding auto-conversion feature.
-
 """
 
 
