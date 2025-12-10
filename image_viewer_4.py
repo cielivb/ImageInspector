@@ -1,16 +1,25 @@
 """
-Image viewer that pans and zooms
+Image viewer that pans and zooms.
+The pan and zoom mechanism is comparable to Google Maps.
+No scrollbar is implemented.
 
 Heavily inspired by demo code at
 https://forums.wxwidgets.org/viewtopic.php?p=196414#p196414
 
 Next steps:
 - centre image at startup
+- autoscale frame to fit image where image is larger than 300x300 pixels
+- if image size is greater than display size, fit to display
+- investigate alternatives to getting image size besides opencv
+- clarify logic in ViewerPanel.OnZoom()
+- replace wx.Point2D and wx.Point objects with tuples where practical
+- why so twitchy?
+- add zoom bar below image so touchscreen is not required
+
 """
 
 
 import wx
-import wx.lib.scrolledpanel as scrolled
 import cv2
 
 
@@ -36,12 +45,7 @@ class ViewerPanel(wx.Panel):
     def DoDrawCanvas(self, gc):
         image = gc.CreateBitmap(wx.Bitmap(self.image_file))
         height, width = cv2.imread(self.image_file).shape[0:2]
-        gc.DrawBitmap(image, 10, 10, width, height)
-        print('Zoom factor = ', self.zoom_factor)
-        #print('pan_vec = ', self.pan_vec)
-        #print('in_prog_start = ', self.in_prog_start)
-        #print('in_prog_vec = ', self.in_prog_vec)
-        #print('pan_in_prog = ', self.pan_in_prog)
+        gc.DrawBitmap(image, 5, 5, width, height)
         
     def OnPaint(self, event):
         # Create Paint DC
@@ -175,7 +179,8 @@ class ViewerPanel(wx.Panel):
 class Base(wx.Frame):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        self.panel = ViewerPanel(self, 'images/stack.png')
+        #self.panel = ViewerPanel(self, 'images/small.png')
+        self.panel = ViewerPanel(self, 'images/big.jpg')
 
 
 def main():
