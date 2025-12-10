@@ -12,6 +12,7 @@ https://forums.wxwidgets.org/viewtopic.php?p=196414#p196414
 import wx
 import cv2
 
+import wx.lib.inspection
 
 
 class ViewerPanel(wx.Panel):
@@ -39,8 +40,6 @@ class ViewerPanel(wx.Panel):
         self.Bind(wx.EVT_SIZE, self.OnSize)
     
     def OnSize(self, event):
-        """Pan and zoom image according to resize"""
-        print('Size event!', event.GetSize())
         self.Refresh()
         
     def GetBitmapPosition(self):
@@ -114,7 +113,6 @@ class ViewerPanel(wx.Panel):
             a = self.zoom_factor / 100
             
             # Add self.pan_vec and self.in_prog_vec together
-            print(self.pan_vec, self.in_prog_vec)
             panvec_tuple = self.pan_vec.Get()
             inprogvec_tuple = self.in_prog_vec.Get()
             total_x = panvec_tuple[0] + inprogvec_tuple[0]
@@ -243,8 +241,9 @@ class Base(wx.Frame):
         #self.panel = ViewerPanel(self, 'images/medium.jpg')
         self.panel = ViewerPanel(self, 'images/big.gif') #SHOWS FIRST SCENE ONLY
         #self.panel = ViewerPanel(self, 'images/nebula.webp') #FAILS
+        
         self.SetMinSize((300,300))
-        self.SetSize(self.panel.GetSize())        
+        self.SetMaxSize(wx.DisplaySize())
         
         self.zoom_out_button = wx.Button(self, label='-', size=(30,30))
         self.zoom_in_button = wx.Button(self, label='+', size=(30,30))
@@ -255,13 +254,15 @@ class Base(wx.Frame):
         sizer.Add(self.panel, 20, wx.EXPAND)
         sizer.Add(self.zoom_sizer, 1, wx.ALIGN_CENTRE, 5)
         self.SetSizer(sizer)
-        self.SetAutoLayout(True)
 
 
 def main():
     app = wx.App(False)
     base = Base(None, wx.ID_ANY)
     base.Show()
+    
+    #wx.lib.inspection.InspectionTool().Show()
+    
     app.MainLoop()
 
 if __name__ == '__main__':
