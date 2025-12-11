@@ -29,7 +29,7 @@ class ViewerPanel(wx.Panel):
         
         
     ### Initialisation methods -----------------------------------------
-    
+        
     def InitGraphicsAttr(self, image_file):
         """ Initialise window attributes related to graphics """
         self.image_file = image_file
@@ -58,7 +58,6 @@ class ViewerPanel(wx.Panel):
     ## Paint methods ----------------------------------------------------
     
     def OnSize(self, event):
-        print('OnSize')
         self.Refresh()
         
         
@@ -133,7 +132,6 @@ class ViewerPanel(wx.Panel):
         
     def OnPaint(self, event):
         """ Paint the image onto the ViewerPanel """
-        print('OnPaint')
         # Initialise paint device context
         dc = wx.AutoBufferedPaintDC(self)
         dc.Clear()
@@ -273,7 +271,7 @@ def main(image_file):
     app = wx.App(False)
     base = Base(image_file=image_file, parent=None, 
                 id=wx.ID_ANY, title='Image Viewer',
-                pos=wx.DefaultPosition, size=(300,300),
+                pos=wx.DefaultPosition, size=(400,300),
                 style=wx.DEFAULT_FRAME_STYLE,
                 name='ImageViewer')
     #wx.lib.inspection.InspectionTool().Show()
