@@ -85,12 +85,47 @@ class ViewerPanel(wx.Panel):
     
     def GetBitmapSize(self):
         """Want to rescale based on panel height and width."""
-        pass
+        
+        # Get panel and scaled image dimensions
+        panel_width = self.GetSize()[0]
+        panel_height = self.GetSize()[1]
+        image_width = self.image.GetWidth()
+        image_height = self.image.GetHeight()
+        
+        if image_height > panel_height or image_width > panel_width:
+            
+            # If original image is larger in any dimension than the panel,
+            # check what % larger each dimension of image is than panel,
+            # and scale down both dimensions by the larger % difference.
+            # Do not directly scale original image. Return only scaled
+            # image dimensions.
+            
+            prop_diff_width = (image_width - panel_width) / panel_width
+            prop_diff_height = (image_height - panel_height) / panel_height
+            scale = max(prop_diff_width, prop_diff_height)
+            
+            self.scaled_img_dims = (image_width/scale, image_height/scale)
+            
+            # If the either of the scaled image dimensions exceed original
+            # image size, reset scaled image dimensions to original image
+            # dimensions
+            
+            if self.scaled_img_dims[0] > image_width or self.scaled_img_dims[1] > image_height:
+                self.scaled_img_dims = (image_width, image_height)
+        
+        else:
+            
+            # The image fits neatly in the panel. Use original image 
+            # dimensions as scaled image dimensions.
+            self.scaled_image_dims = (image_width, image_height)
+        
+        return self.scaled_img_dims
+        
         
     
     def DrawCanvas(self, gc):
         image = gc.CreateBitmap(wx.Bitmap(self.image))
-        height, width = 300, 300 # Implement auto-adjust function later
+        width, height = self.GetBitmapSize()
         start_coords = self.GetBitmapPosition()
         gc.DrawBitmap(image, start_coords[0], start_coords[1],
                       self.scaled_img_dims[0], self.scaled_img_dims[1])
