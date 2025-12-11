@@ -127,7 +127,28 @@ class ViewerPanel(wx.Panel):
         
     
     def ProcessPan(self, position, do_refresh):
-        self.in_prog_vec = self.in_prog_start - position
+        self.in_prog_vec = self.in_prog_start - position    
+                
+        frame_size_x = self.GetParent().GetSize()[0]
+        
+        if self.scaled_width > frame_size_x:
+            # Find pan_vec x range
+            size_diff = (self.scaled_width/2 - frame_size_x/2)
+            pan_range_x = [-size_diff, 1.2*size_diff] # 1.2 = border buffer
+            
+            # Make sure it doesn't pan too far
+            panvec_tuple = self.pan_vec.Get()
+            inprogvec_tuple = self.in_prog_vec.Get()
+            sum_x = panvec_tuple[0] + inprogvec_tuple[0]
+            if sum_x < pan_range_x[0]:
+                self.in_prog_vec[0] = 0
+                self.pan_vec[0] = int(pan_range_x[0])
+                self.FinishPan(True)
+            elif sum_x > pan_range_x[1]:
+                self.in_prog_vec[0] = 0
+                self.pan_vec[0] = int(pan_range_x[1])
+                self.FinishPan(True)
+            
         if do_refresh:
             self.Refresh()
     
@@ -140,7 +161,7 @@ class ViewerPanel(wx.Panel):
         self.Unbind(wx.EVT_LEFT_UP)
         self.Unbind(wx.EVT_MOTION)
         self.Unbind(wx.EVT_MOUSE_CAPTURE_LOST)
-        
+                
         # Update pan vector (+= in_prog_vec)
         panvec_tuple = self.pan_vec.Get()
         inprogvec_tuple = self.in_prog_vec.Get()
