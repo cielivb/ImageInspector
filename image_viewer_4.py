@@ -10,7 +10,6 @@ https://forums.wxwidgets.org/viewtopic.php?p=196414#p196414
 
 
 import wx
-import cv2
 import numpy as np
 
 import wx.lib.inspection
