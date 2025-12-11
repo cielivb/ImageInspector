@@ -25,7 +25,9 @@ class ViewerPanel(wx.Panel):
         
         # Initialise general window attributes
         self.image_file = image_file
+        self.image = wx.Bitmap(self.image_file)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
+        self.zoom_factor = 1
         
         # Initialise pan vector and related attributes
         self.pan_vec = np.array([0,0]) # Current pan position
@@ -57,8 +59,10 @@ class ViewerPanel(wx.Panel):
         pass
         
     
-    def DoDrawCanvas(self, gc):
-        pass
+    def DrawCanvas(self, gc):
+        image = gc.CreateBitmap(self.image)
+        height, width = 300, 300 # Implement auto-adjust function later
+        gc.DrawBitmap(image, 0, 0, 300, 300)
         
         
     def OnPaint(self, event):
@@ -73,7 +77,17 @@ class ViewerPanel(wx.Panel):
         
         # Create graphics context from Paint DC
         gc = wx.GraphicsContext.Create(dc)
-    
+        if gc:
+            # Position view according to pan
+            total_pan = self.pan_vec + self.in_prog_vec
+            gc.Translate(-total_pan[0], -total_pan[1])
+            
+            # Scale x and y axes equally according to zoom factor
+            gc.Scale(self.zoom_factor, self.zoom_factor)
+            
+            self.DrawCanvas(gc)
+        
+        del(gc)
     
     
     ### Pan methods ----------------------------------------------------
