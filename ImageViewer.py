@@ -108,7 +108,7 @@ class ViewerPanel(wx.Panel):
     
     
     def GetBitmapSize(self):
-        """Want to rescale based on panel height and width."""
+        """ Want to rescale based on panel height and width. """
         
         # Get panel and scaled image dimensions
         panel_width = self.GetSize()[0]
