@@ -8,12 +8,20 @@
 <!-- badges: end -->
 
 # ImageViewer
-ImageViewer is a widget module developed using WxPython which lets the user zoom and pan across a single image in a similar manner to using Google Maps. 
 
-ImageViewer was developed with the intention of implementing it as part of a larger personal WxPython GUI application project. In the larger application, one or more ImageViewers can be opened in response to one or more events, for example, a button press as demonstrated in the example videos below. ImageViewer is not intended to be a 'gallery explorer' which traverses across image files in a given directory. It is intended as a tool to aid in the visual inspection of a single image file. I will likely rename ImageViewer to something like ImageInspector in the future.
+## About ImageViewer
+ImageViewer is a widget module developed using WxPython that lets the user zoom and pan across a single image in a similar manner to using Google Maps. 
 
-Future enhancements could include restricting users from panning infinitely far away from the image, the option to apply contrast enhancement masks, and the ability to save a local copy of images. 
+ImageViewer enables the user to: 
+- View a single .png, .jpg, or .webp image
+- Use click and release (including via touchscreen) to pan across an image
+- Double click to zoom in
+- Click on +/- buttons to zoom in and out
+- Use touchscreen pinch gesture to zoom in and out
+- Reset image state using the reset button
 
+
+### Example Videos using included Test App
 <details>
   <summary>Test App Example Video 1</summary>
   
@@ -34,6 +42,12 @@ Future enhancements could include restricting users from panning infinitely far 
   
 </details>
 
+### ImageViewer Motivation
+ImageViewer was developed with the intention of implementing it as part of a larger personal WxPython GUI application project. In the larger application, one or more ImageViewers can be opened in response to one or more events, for example, a button press as demonstrated in the example videos below. ImageViewer is not intended to be a 'gallery explorer' which traverses across image files in a given directory. It is intended as a tool to aid in the visual inspection of a single image file. As such, I will likely rename ImageViewer to something like ImageInspector in the future.
+
+### Future enhancements
+Future enhancements could include expanding the range of viewable image file types, restricting users from panning infinitely, adding an option to apply contrast enhancement masks, and adding a save image feature.
+
 
 
 ## How to Use ImageViewer
@@ -43,7 +57,8 @@ tests.py contains the code for a tiny WxPython app that implements the core func
 - Set your binding/s
 - In your event handler, call <code>iv.view(parent=self, image_file='imagepath')</code>, and an ImageViewer displaying the image located at your imagepath should appear.
 
-You will need to install the following packages if you don't already have them: wx, numpy, pillow.
+You will need to install the following packages if you don't already have them: wx, numpy, pillow. ImageViewer has been specifically tested on Python 3.13.5, wxPython 4.2.4, numpy 2.2.6, pillow 12.0.0.
+
 
 
 ## Credits
