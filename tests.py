@@ -26,10 +26,10 @@ class TestPanel(wx.Panel):
         self.SetSizer(sizer)
     
     def OpenViewer(self, event):
-        if event.GetId() == 1: iv.view('images/small.png')
-        elif event.GetId() == 2: iv.view('images/medium.jpg')
-        elif event.GetId() == 3: iv.view('images/medium_vertical.jpg')
-        elif event.GetId() == 4: iv.view('images/nebula.webp')
+        if event.GetId() == 1: iv.view(self, 'images/small.png')
+        elif event.GetId() == 2: iv.view(self, 'images/medium.jpg')
+        elif event.GetId() == 3: iv.view(self, 'images/medium_vertical.jpg')
+        elif event.GetId() == 4: iv.view(self, 'images/nebula.webp')
     
         
 class TestFrame(wx.Frame):
