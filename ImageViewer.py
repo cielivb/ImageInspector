@@ -1,18 +1,21 @@
 """
-Image viewer that pans and zooms.
-The pan and zoom mechanism is comparable to Google Maps.
-No scrollbar is implemented.
+Image viewer with a pan and zoom mechanism comparable to Google Maps.
+
+This script is designed to be portable into a larger GUI application. Simply 
+copy this module into the same directory as your script and call 
+ImageViewer.view(image_file) where image_file is a string representing the 
+relative file path of the image you wish to display.
 
 Inspired by demo code logic at
 https://forums.wxwidgets.org/viewtopic.php?p=196414#p196414
 
 """
 
-
 import wx
 import numpy as np
-from PIL import Image as PILImage
 import os
+
+from PIL import Image as PILImage
 
 
 
@@ -27,6 +30,7 @@ class ViewerPanel(wx.Panel):
         self.InitVecAttr()
         self.SetBindings()
         
+    
         
     ### Initialisation methods -----------------------------------------
         
@@ -39,14 +43,22 @@ class ViewerPanel(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         self.zoom_factor = 1        
     
+    
     def InitVecAttr(self):
         """ Initialise pan vector and related attributes """
         self.pan_vec = np.array([0,0]) # Current pan position
-        self.in_prog_start = np.array([0,0]) # Pan start position (updated in OnLeftDown to represent event position)
-        self.in_prog_vec = np.array([0,0]) # Difference between pan_vec and actual pan position
+        
+        # Pan start position (updated in OnLeftDown to represent event position)
+        self.in_prog_start = np.array([0,0]) 
+        
+        # Difference between pan_vec and actual pan position
+        self.in_prog_vec = np.array([0,0]) 
+        
         self.is_panning = False # Whether pan is currently in progress    
         
+        
     def SetBindings(self):
+        """ Set permanent ViewerPanel bindings """
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         
@@ -62,6 +74,7 @@ class ViewerPanel(wx.Panel):
         # Reset binding
         self.Bind(wx.EVT_BUTTON, self.OnResetButton, id=3)
         
+    
     
     ## Utility methods --------------------------------------------
     
@@ -86,7 +99,7 @@ class ViewerPanel(wx.Panel):
         # Convert .webp image file to .png file
         if image_file.endswith('.webp'):
             image = PILImage.open(image_file)
-            filename = image_file.split('/')[-1] # Just the filename with extension
+            filename = image_file.split('/')[-1] # Just filename with ext
             filename = filename.split('.')[0] + '.png' # Replace extension
             filename = os.path.join(os.path.dirname(__file__), 'temp', filename)
             image.save(filename, 'PNG')
@@ -101,6 +114,7 @@ class ViewerPanel(wx.Panel):
     ## Paint methods ----------------------------------------------------
     
     def OnSize(self, event):
+        """ Refresh background when ViewerPanel size changes """
         self.Refresh()
         
         
@@ -127,7 +141,7 @@ class ViewerPanel(wx.Panel):
     
     
     def GetBitmapSize(self):
-        """ Want to rescale based on panel height and width. """
+        """ Get display image dimensions based on panel height and width. """
         
         # Get panel and scaled image dimensions
         panel_width = self.GetSize()[0]
@@ -164,9 +178,9 @@ class ViewerPanel(wx.Panel):
         
         return self.scaled_img_dims
         
-        
     
     def DrawCanvas(self, gc):
+        """ Draw image onto ViewerPanel """
         image = gc.CreateBitmap(wx.Bitmap(self.image))
         width, height = self.GetBitmapSize()
         start_coords = self.GetBitmapPosition()
@@ -175,7 +189,7 @@ class ViewerPanel(wx.Panel):
         
         
     def OnPaint(self, event):
-        """ Paint the image onto the ViewerPanel """
+        """ Prepare to draw on ViewerPanel """
         # Initialise paint device context
         dc = wx.AutoBufferedPaintDC(self)
         dc.Clear()
@@ -195,16 +209,18 @@ class ViewerPanel(wx.Panel):
         del(gc)
     
     
+    
     ### Pan methods ----------------------------------------------------
     
     def ProcessPan(self, position, do_refresh):
+        """ Update in progress vector then refresh display """
         self.in_prog_vec = self.in_prog_start - position
         if do_refresh:
             self.Refresh()
     
     
     def FinishPan(self, do_refresh):
-        
+        """ Restore attributes and bindings to pre-panning state """
         # Restore cursor to arrow and release mouse capture
         if self.is_panning: self.SetCursor(wx.Cursor(wx.CURSOR_ARROW))
         if self.HasCapture(): self.ReleaseMouse()
@@ -226,6 +242,7 @@ class ViewerPanel(wx.Panel):
         
     
     def OnLeftUp(self, event):
+        """ Process last pan event then finish pan """
         event_position = np.array([event.GetPosition()[0],
                                    event.GetPosition()[1]])
         self.ProcessPan(event_position, False)
@@ -233,12 +250,14 @@ class ViewerPanel(wx.Panel):
     
     
     def OnMotion(self, event):
+        """ Signal to process current pan event """
         event_position = np.array([event.GetPosition()[0],
                                    event.GetPosition()[1]])
         self.ProcessPan(event_position, True)
     
     
     def OnCaptureLost(self, event):
+        """ Finish pan if mouse capture is lost """
         self.FinishPan(True)
     
     
@@ -385,6 +404,7 @@ class BasePanel(wx.Panel):
                                 self.zoom_out_btn.Id)
         viewer_panel = self.GetChildren()[0]
         viewer_panel.GetEventHandler().ProcessEvent(event)
+    
         
     def OnZoomIn(self, event):
         """ Post Zoom In Button event to ViewerPanel """
@@ -392,6 +412,7 @@ class BasePanel(wx.Panel):
                                 self.zoom_in_btn.Id)
         viewer_panel = self.GetChildren()[0]
         viewer_panel.GetEventHandler().ProcessEvent(event)
+    
     
     def OnReset(self, event):
         """ Post Reset Button event to ViewerPanel """
@@ -404,6 +425,7 @@ class BasePanel(wx.Panel):
 
 class Base(wx.Frame):
     """ Base frame to support Base Panel """
+    
     def __init__(self, image_file, *args, **kw):
         wx.Frame.__init__(self, *args, **kw)
         self.temp_file = None
@@ -428,8 +450,10 @@ class Base(wx.Frame):
 
 
 
+
+### Execution functions -------------------------------------------------
         
-def main(image_file):
+def view(image_file):
     """ Open and run image viewer, which will display given image file """
     app = wx.App(False)
     wx.InitAllImageHandlers()
@@ -442,8 +466,11 @@ def main(image_file):
 
 
 if __name__ == '__main__':
-    #main(image_file = 'images/small.png')
-    #main(image_file = 'images/medium.jpg')
-    #main(image_file = 'images/medium_vertical.jpg')
-    main(image_file = 'images/nebula.webp') # FAILS
+    """ Run ImageViewer with test images """
+    # Uncomment line with image you wish to test. 
+    
+    #view(image_file = 'images/small.png')
+    view(image_file = 'images/medium.jpg')
+    #view(image_file = 'images/medium_vertical.jpg')
+    #view(image_file = 'images/nebula.webp')
     
