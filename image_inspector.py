@@ -3,9 +3,10 @@ Image viewer with a pan and zoom mechanism comparable to Google Maps.
 
 This script is designed to be portable into a larger GUI application.
 Simply import this module into your script and call
-ImageViewer.view(self, image_file) where image_file is a string
+image_inspector.view(self, image_file) where image_file is a string
 representing the relative file path of the image you wish to display.\n
 """
+
 import os
 
 import wx
@@ -465,7 +466,7 @@ def view(parent, image_file):
 
 
 def main(image_file):
-    """ Initialises wx app to use ImageViewer """
+    """ Initialises wx app to use ImageInspector """
     app = wx.App(False)
     wx.InitAllImageHandlers()
     base = _Base(image_file=image_file, parent=None,

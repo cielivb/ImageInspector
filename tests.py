@@ -1,7 +1,7 @@
-""" Test App for ImageViewer widget """
+""" Test App for ImageInspector widget """
 
 import wx
-import ImageViewer as iv
+import image_inspector
 
 
 
@@ -27,13 +27,13 @@ class TestPanel(wx.Panel):
 
     def open_viewer(self, event):
         if event.GetId() == 1:
-            iv.view(self, 'images/small.png')
+            image_inspector.view(self, 'images/small.png')
         elif event.GetId() == 2:
-            iv.view(self, 'images/medium.jpg')
+            image_inspector.view(self, 'images/medium.jpg')
         elif event.GetId() == 3:
-            iv.view(self, 'images/medium_vertical.jpg')
+            image_inspector.view(self, 'images/medium_vertical.jpg')
         elif event.GetId() == 4:
-            iv.view(self, 'images/nebula.webp')
+            image_inspector.view(self, 'images/nebula.webp')
 
 
 class TestFrame(wx.Frame):
