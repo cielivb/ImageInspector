@@ -86,10 +86,12 @@ class ViewerPanel(wx.Panel):
         # Convert .webp image file to .png file
         if image_file.endswith('.webp'):
             image = PILImage.open(image_file)
-            png_filename = image_file.split('/')[-1]
-            png_filename = 'temp/' + png_filename.split('.')[0] + '.png'
-            image.save(png_filename, 'PNG')
-            return wx.Image(png_filename)
+            filename = image_file.split('/')[-1] # Just the filename with extension
+            filename = filename.split('.')[0] + '.png' # Replace extension
+            filename = os.path.join(os.path.dirname(__file__), 'temp', filename)
+            image.save(filename, 'PNG')
+            self.GetParent().GetParent().temp_file = filename
+            return wx.Image(filename)
         
         else:
             return wx.Image(self.image_file)
@@ -404,6 +406,7 @@ class Base(wx.Frame):
     """ Base frame to support Base Panel """
     def __init__(self, image_file, *args, **kw):
         wx.Frame.__init__(self, *args, **kw)
+        self.temp_file = None
         panel = BasePanel(image_file=image_file, parent=self,
                           id=wx.ID_ANY)
         
@@ -411,8 +414,17 @@ class Base(wx.Frame):
         self.SetMinSize((300,300))
         self.SetMaxSize(wx.DisplaySize())
         
+        self.Bind(wx.EVT_CLOSE, self.OnExit)
+        
         self.Layout()
         self.Show()
+    
+    
+    def OnExit(self, event):
+        """ Discard temp image file if present before closing """
+        if self.temp_file is not None:
+            os.remove(self.temp_file)
+        self.Destroy()
 
 
 
