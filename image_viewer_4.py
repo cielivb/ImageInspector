@@ -55,10 +55,15 @@ class ViewerPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnZoomInButton, id=2)
         
     
-    ## Normalisation methods --------------------------------------------
+    ## Utility methods --------------------------------------------
     
-    def NormaliseEventPosition(self, evt_pos):
-        pass
+    def GetViewerPanelCentre(self):
+        """ Get centre position relative to top left corner """
+        panel_size = self.GetSize()
+        panel_centre = (panel_size[0] / 2,
+                        panel_size[1] / 2) # w x h
+        return panel_centre
+        
     
     ## Paint methods ----------------------------------------------------
     
@@ -73,9 +78,10 @@ class ViewerPanel(wx.Panel):
         By default, the image drawing begins at the top left corner, hence
         need to calculate this position.
         """
-        # Get viewer panel centre position
-        panel_size = self.GetSize()
-        panel_centre = np.array([panel_size[0]/2, panel_size[1]/2]) # w x h
+        # Get viewer panel centre position (width x height)
+        panel_centre_tuple = self.GetViewerPanelCentre()
+        panel_centre = np.array([panel_centre_tuple[0],
+                                 panel_centre_tuple[1]])
         
         # Get scaled image centre
         image_centre = np.array([self.scaled_img_dims[0]/2, 
@@ -235,7 +241,7 @@ class ViewerPanel(wx.Panel):
         """ Zoom out by 50% """
         old_zoom = self.zoom_factor
         self.zoom_factor = old_zoom * 0.5
-        centre = (200, 150) # implement self.GetViewerCentre() later
+        centre = self.GetViewerPanelCentre()
         self.OnZoom(old_zoom, self.zoom_factor, centre)
     
     
@@ -243,7 +249,7 @@ class ViewerPanel(wx.Panel):
         """ Zoom in by 50% """
         old_zoom = self.zoom_factor
         self.zoom_factor = old_zoom * 1.5
-        centre = (200, 150) # Implement self.GetViewerPanelCentre() later
+        centre = self.GetViewerPanelCentre()
         self.OnZoom(old_zoom, self.zoom_factor, centre)
 
 
