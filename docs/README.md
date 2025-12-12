@@ -16,20 +16,31 @@ Future enhancements could include restricting users from panning infinitely far 
 
 <details>
   <summary>Test App Example Video 1</summary>
+  
   Demonstrating pan and zoom ability on multiple ImageViewer instances.
+
+  
   https://github.com/user-attachments/assets/43e27f91-a555-49a6-add6-c06e6aa7dbd1
   
 </details>
 
 <details>
   <summary>Test App Example Video 2</summary>
+  
   Demonstrating pan and zoom ability as well as resize behaviour on a single ImageViewer instance.
+
+  
   https://github.com/user-attachments/assets/5f5f83a6-4f26-4976-9f94-ce98c05a0ebd
   
 </details>
 
 
-##
 
+## How to Use ImageViewer
+tests.py contains the code for a tiny WxPython app that implements the core functionality of ImageViewer. Use this as your key reference point. Key points to note:
+- Put ImageViewer.py in the same directory as your WxPython script
+- Import ImageViewer.py into your WxPython script, e.g., <code>import ImageViewer as iv</code>
+- Set your binding/s
+- In your event handler, call <code>iv.view(self, 'imagepath')</code>, and an ImageViewer displaying the image located at your imagepath should appear.
 
-
+You will need to install the following packages if you don't already have them: wx, numpy, pillow.
