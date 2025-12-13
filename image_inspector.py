@@ -8,6 +8,7 @@ representing the relative file path of the image you wish to display.\n
 """
 
 import os
+import sys
 
 import requests
 import wx
@@ -117,16 +118,27 @@ class _ViewerPanel(wx.Panel):
 
     def _load_image(self, image_file):
         """ Load image file as wx.Image object """
-        if image_file.startswith('http'):
-            image = self._retrieve_image_from_web(image_file)
-        else:
-            image = PILImage.open(image_file)
+        frame = self.GetParent().GetParent()
+        
+        try:
+            if image_file.startswith('http'):
+                image = self._retrieve_image_from_web(image_file)
+            else:
+                image = PILImage.open(image_file)
+            filename = self._process_image_file_name(image_file)
+            image.save(filename, 'PNG')
+            frame.temp_file = filename
+            return wx.Image(filename)
 
-        filename = self._process_image_file_name(image_file)
-        image.save(filename, 'PNG')
-        self.GetParent().GetParent().temp_file = filename
-
-        return wx.Image(filename)
+        except:
+            message = f'Failed to retrieve image from {image_file}'
+            dlg = wx.MessageDialog(self, 
+                                   message=message,
+                                   caption='Could not find image',
+                                   style=wx.ICON_WARNING)
+            dlg.ShowModal()
+            dlg.Destroy()
+            sys.exit('Image not found')
 
 
 
@@ -449,15 +461,18 @@ class _Base(wx.Frame):
 
     def __init__(self, image_file, *args, **kw):
         wx.Frame.__init__(self, *args, **kw)
+        
+        # Must call before panel is instantiated so app can close if 
+        # panel instantiation fails
         self.temp_file = None
+        self.Bind(wx.EVT_CLOSE, self._on_exit) 
+        
         panel = _BasePanel(image_file=image_file, parent=self,
                           id=wx.ID_ANY)
 
         # Set frame size limits
         self.SetMinSize((300,300))
         self.SetMaxSize(wx.DisplaySize())
-
-        self.Bind(wx.EVT_CLOSE, self._on_exit)
 
         self.Layout()
         self.Show()
@@ -498,5 +513,5 @@ def main(image_file):
     app.MainLoop()
 
 if __name__ == '__main__':
-    #main('images/medium.jpg')
-    main('https://scitechdaily.com/images/image-of-the-planetary-nebula-NGC-5189.jpg')
+    main('images/medium.jpg')
+    #main('https://scitechdaily.com/images/image-of-the-planetary-nebula-NGC-5189.jpg')
