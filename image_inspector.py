@@ -379,10 +379,10 @@ class _ViewerPanel(wx.Panel):
 
 
 
-### _Base class supporting _ViewerPanel ----------------------------------
+### ImageInspector class supporting _ViewerPanel ----------------------------------
 
-class _BasePanel(wx.Panel):
-    """ _Base panel to support _ViewerPanel and Zoom buttons """
+class ImageInspectorPanel(wx.Panel):
+    """ ImageInspector panel to support _ViewerPanel and Zoom buttons """
 
     def __init__(self, image_file, *args, **kw):
         super().__init__(*args, **kw)
@@ -456,8 +456,8 @@ class _BasePanel(wx.Panel):
 
 
 
-class _Base(wx.Frame):
-    """ _Base frame to support _Base Panel """
+class ImageInspector(wx.Frame):
+    """ ImageInspector frame to support ImageInspector Panel """
 
     def __init__(self, image_file, *args, **kw):
         wx.Frame.__init__(self, *args, **kw)
@@ -467,7 +467,7 @@ class _Base(wx.Frame):
         self.temp_file = None
         self.Bind(wx.EVT_CLOSE, self._on_exit) 
         
-        panel = _BasePanel(image_file=image_file, parent=self,
+        panel = ImageInspectorPanel(image_file=image_file, parent=self,
                           id=wx.ID_ANY)
 
         # Set frame size limits
@@ -495,7 +495,7 @@ def view(parent, image_file):
     This function should be called from a currently running wxpython app.
     """
     wx.InitAllImageHandlers()
-    base = _Base(image_file=image_file, parent=parent,
+    base = ImageInspector(image_file=image_file, parent=parent,
                 id=wx.ID_ANY, title='Image Viewer',
                 pos=wx.DefaultPosition, size=(400,300),
                 style=wx.DEFAULT_FRAME_STYLE)
@@ -506,7 +506,7 @@ def main(image_file):
     """ Initialises wx app to use ImageInspector """
     app = wx.App(False)
     wx.InitAllImageHandlers()
-    base = _Base(image_file=image_file, parent=None,
+    base = ImageInspector(image_file=image_file, parent=None,
                 id=wx.ID_ANY, title='Image Viewer',
                 pos=wx.DefaultPosition, size=(400,300),
                 style=wx.DEFAULT_FRAME_STYLE)
