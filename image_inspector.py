@@ -93,6 +93,9 @@ class _ViewerPanel(wx.Panel):
         self.Refresh()
 
 
+
+    ## Load image functions -----------------------------------------------
+
     def _process_image_file_name(self, image_file):
         """ Standardise image file name """
         filename = image_file.split('/')[-1] # Just filename with ext
@@ -101,41 +104,29 @@ class _ViewerPanel(wx.Panel):
         return filename
 
 
-    def _retrieve_from_web(self, image_file):
+    def _retrieve_image_from_web(self, image_file):
         """ Load image file from internet as wx.Image object """
         response = requests.get(image_file)
         if response.status_code == 200: # Image successfully found
-            filename = self._process_image_file_name(image_file)            
-            image_bytes = response.content
+            image_bytes = response.content            
             image = PILImage.open(BytesIO(image_bytes))
-            image.save(filename)
-            
-            return (wx.Image(filename), filename)
-        
+            return image
         else:
             raise Exception(f'Failed to retrieve image file {image_file}')
 
 
     def _load_image(self, image_file):
         """ Load image file as wx.Image object """
-
         if image_file.startswith('http'):
-            image, filename = self._retrieve_from_web(image_file)
-
-        # Convert .webp image file to .png file
-        elif image_file.endswith('.webp'):
-            image = PILImage.open(image_file)
-            filename = self._process_image_file_name(image_file)
-            image.save(filename, 'PNG')
-            image = wx.Image(filename)
-        
+            image = self._retrieve_image_from_web(image_file)
         else:
-            filename = image_file
-            image = wx.Image(filename)
+            image = PILImage.open(image_file)
 
+        filename = self._process_image_file_name(image_file)
+        image.save(filename, 'PNG')
         self.GetParent().GetParent().temp_file = filename
 
-        return image
+        return wx.Image(filename)
 
 
 
